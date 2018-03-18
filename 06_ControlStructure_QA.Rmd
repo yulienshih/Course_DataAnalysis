@@ -1,0 +1,132 @@
+---
+title: "控制流程 課堂練習"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### ```if(){ }else{}```和```ifelse()```在本質上有什麼不同?
+
+#### 解答
+ifelse 可一次判斷多個元素，可判斷向量。<br/>
+其他條件判斷函數則無法判斷向量，且會產生Warning Message。
+
+
+<hr/>
+
+#### 新增一個數值```score```，值設定為80
+撰寫if- else if - else條件判斷式，依```score```變數數值判斷，邏輯如下：
+
+- 小於60分，印出“回家洗洗睡再戰下學年"
+- 大於等於60分，小於75分，印出"低空飛過"
+- 大於等於75分，小於90分，印出"普通"
+- 大於等於90分，印出"挑戰學霸"
+
+#### 解答
+```{r}
+score<-80
+
+if(score<60){
+  print("回家洗洗睡再戰下學年")
+  }else if(score>=60 & score<75){
+    print("低空飛過")
+    }else if(score>=75 & score<90){
+      print("普通")
+      }else {
+      print("挑戰學霸")
+    }
+  
+
+```
+<hr/>
+#### 基於```iris```資料內的```Sepal.Length```欄位，新增一個```Type```欄位<br>
+####邏輯：
+
+- 如果```Sepal.Length``` 大於5.5，```Type```設定為"長"
+- 小於等於5.5，```Type```設定為"短"
+
+#### 解答
+```{r video}
+iris$Type<-""
+iris$Type<-ifelse(iris$Sepal.Length>5.5,"長","短")
+
+#為精簡版面僅顯示前後六行供同學參考
+head(iris)
+tail(iris)
+```
+
+<hr/>
+
+#### 新增一向量```a```，包含1~20的所有奇數，請撰寫一個for迴圈，逐一印出向量```a```內的元素，但遇到13的倍數時，直接跳出迴圈，不繼續執行
+
+
+#### 解答
+
+```{r q4}
+a<-seq(1,20,2)
+
+for (i in a){
+if(i %%13==0){
+ break 
+}
+print(i)
+}
+```
+
+<hr/>
+
+#### 在```USArrests```集中，新增一個```QOL```變數，描述生活品質與是否適合居住，判別邏輯如下：如果謀殺率```Murder```大於10，直接設為“不宜人居”，若謀殺率```Murder```小於等於10，則需再考慮毆打侵犯率```Assault```，若毆打侵犯率大於100，設為“要非常小心”，若毆打侵犯率小於等於100，則需再考慮市區人口```UrbanPop```，超過70設定為"很擠"，其他就設定為“可以住”。請用nested if else完成上述生活品質分類。最後美國共有幾個州屬於"可以住"類別？
+
+#### 解答
+
+```{r q6}
+USArrests$QOL<-""
+USArrests$QOL<- ifelse(USArrests$Murder>10,"不宜人居",
+                 ifelse(USArrests$Assault>100,"要非常小心",
+                        ifelse(USArrests$UrbanPop>70,"很擠","可以住")))
+table(USArrests$QOL)
+  
+```
+
+<hr/>
+
+#### 務必用```if-else```（傳統式）搭配```for()```迴圈撰寫！<br/>
+####在```airquality```中新增一個變數```Outdoor```，描述這天的空氣品質是否適合出門，若臭氧```Ozone```大於20，且太陽光強度```Solar radiation```大於100，```Outdoor```設定為“不適合出門”，若臭氧```Ozone```小於20，且太陽光強度```Solar radiation```小於100，設定為“適合出門”，其他情況請設定為”未知“。<br/>
+
+#### 完成設定後，資料集內有幾天為“不適合出門”、“適合出門”和“未知”？<br/>
+
+#### 請將程式碼貼上，並在後方貼上答案
+
+#### 解答(```ifelse()```寫法)
+
+```{r q5???}
+
+airquality$Outdoor<-""
+airquality$Outdoor<-ifelse(airquality$Ozone>20&airquality$Solar.R>100,"不適合出門",
+       ifelse(airquality$Ozone<20&airquality$Solar.R<100,"適合出門",
+              "未知"))
+table(airquality$Outdoor)
+```
+
+<hr/>
+
+
+####請以雙層for迴圈撰寫以下程式碼：
+長庚汽車公司生產的汽車都使用數字編碼，因為4結尾很不吉利，所以當個位數是4的時候，此編碼必須跳過不使用，目前長庚汽車公司所生廠的汽車已經從1號編到65號，請逐一印出長庚汽車公司所有生產的汽車編號。
+提示：十位數與個位數分開處理、next、break
+#### 解答
+
+```{r q6???}
+##單層迴圈作法
+for(i in c(1:65)){
+if(i%%10==4){
+  next
+}
+  print(i)
+}
+  
+```
+
+<hr/>
