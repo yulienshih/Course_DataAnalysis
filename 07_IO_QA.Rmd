@@ -1,0 +1,80 @@
+---
+title: "資料讀取與匯出 課堂練習"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+####有一個網路上的csv檔，下載網址為https://goo.gl/RdngMn ，請問如何以撰寫程式碼的方式匯入R中作分析? <br/>
+####匯入後，此表格有幾個欄位?
+#### 解答
+
+```{r q1}
+library(readr)
+data_csv<-read_csv("https://goo.gl/RdngMn")
+length(data_csv)
+```
+<hr/>
+
+####下列哪幾種檔案可以匯入R作分析?
+#### 解答
+1. Excel檔 V  
+2. MySQL資料庫檔 V
+3. 純文字檔 (.txt) V
+4. 圖片檔V
+
+<hr/>
+
+
+####Open Data常用的資料格式有哪幾個?
+#### 解答
+1. csv檔 V
+2. pdf檔
+3. Word檔
+4. JSON檔 V
+5. XML檔 V
+
+<hr/>
+
+####在xml中，```<name>Belgian Waffles</name>``` 這樣的文字，又稱作?
+#### 解答
+1. Tag 
+2. attribute
+3. content
+4. element V
+
+<hr/>
+
+####嘗試在政府資料開放平臺中，找到顯著有感地震報告資料。<br/>
+####請問最近一次的有感地震的發生時間為?
+#### 解答
+```{r q2}
+# 資料下載網址：https://data.gov.tw/dataset/6068　（顯著有感地震報告資料-顯著有感地震報告）
+library(XML)
+aaa <- xmlParse("http://opendata.cwb.gov.tw/govdownload?dataid=E-A0015-001R&authorizationkey=rdec-key-123-45678-011121314")
+xpathSApply(aaa,"//earthquakeNo",xmlValue)
+```
+<hr/>
+
+####嘗試在政府資料開放平臺中，找到顯著有感地震報告資料，並嘗試將XML檔案讀到R中，取出最近一次的地震所有測站的名稱與震度資料
+#### 解答
+```{r q3}
+
+  
+```
+<hr/>
+
+####嘗試在政府資料開放平臺中，找到景點 - 觀光資訊資料庫，取出所有景點名稱```Name```，種類```Orgclass```，地址```Add```，以及開放時間```Opentime```，並將這些資料整理成資料框 (回答程式碼)
+####最後分析台灣的景點中，各種類的景點各占多少? (回答程式碼與程式輸出)
+
+#### 解答
+```{r q4}
+library(XML)
+aaa <- xmlParse("http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.xml")
+xpathSApply(aaa,"/ID",xmlValue)
+
+  
+```
+<hr/>
