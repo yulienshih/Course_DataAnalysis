@@ -54,10 +54,10 @@ csv檔、JSON檔、XML檔
 <hr/>
 #### 嘗試在政府資料開放平臺中，找到紫外線即時監測資料，並嘗試將XML檔案讀到R中，取出所有測站的名稱與紫外線強度資料。
 
-Windows電腦有編碼問題，若讀出資料是亂碼，請將資料轉成BIG5<br/> 方法如下:iconv(文字向量,from="UTF8",to="big5")
+Windows電腦有編碼問題，若讀出資料是亂碼，請將資料轉成BIG5<br/> 方法如下:`iconv(文字向量,from="UTF8",to="big5")`
 
--   xmlParse(xml檔案路徑)
--   xpathSApply(資料集,要選取的資料XML的tag名稱,xmlValue)
+-   `xmlParse(xml檔案路徑)`
+-   `xpathSApply(資料集,要選取的資料XML的tag名稱,xmlValue)`
 
 #### 解答
 

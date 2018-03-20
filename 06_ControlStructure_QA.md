@@ -5,7 +5,7 @@
 
 #### 解答
 
-ifelse 可一次判斷多個元素，可判斷向量。<br/> 其他條件判斷函數則無法判斷向量，且會產生Warning Message。
+`ifelse()`可一次判斷多個元素，可判斷向量。<br/> 其他條件判斷函數則無法判斷向量，且會產生Warning Message。
 
 <hr/>
 #### 基於`iris`資料內的`Sepal.Length`欄位，新增一個`Type`欄位<br>
@@ -47,7 +47,7 @@ tail(iris)  ##印資料表最後六行
 
 #### 提醒
 
--   選取欄位資料的方法：某資料表的某欄位（如:iris$Sepal.Length 表示iris 資料表的Sepal.Length）
+-   選取欄位資料的方法：某資料表的某欄位（如:`iris$Sepal.Length`表示iris 資料表的Sepal.Length）
 -   ifelse(判斷式,判斷式TRUE時執行,判斷式為FALSE時執行)
     <hr/>
 
