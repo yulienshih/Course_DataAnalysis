@@ -162,81 +162,23 @@ UV_dataset
 <hr/>
 
 ### 問題
-#### 在xml中，<name>Belgian Waffles</name> 這樣的文字，又稱作?
-### 解答
-element
-<hr/>
-
-### 問題
 #### 使用jsonlite匯入JSON檔後，一開始的資料結構會是?
 ### 解答
 列表
+
 <hr/>
 
 ### 問題
 #### 為什麼我們需要API來擷取資料?
 ### 解答
 
-<hr/>
-### 問題
-#### 嘗試在政府資料開放平臺中，找到景點 - 觀光資訊資料庫，
-http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.json
-取出所有景點名稱Name，種類Orgclass，地址Add，以及開放時間Opentime，並將這些資料整理成資料框 (回答程式碼)
-最後分析台灣的景點中，各種類的景點各占多少? (回答程式碼與程式輸出)。
-提示: Name是Info tag裡面的attribute，跟單純取tag內文方法不同，若需取attribute內的值，範例如下
-xpathSApply(xmlData,‘//Tag名稱’,xmlGetAttr,‘attribute名稱')
-
-### 解答
-``` r
-library(jsonlite)
-library(RCurl)
-SpotData<-fromJSON("http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.json")
-str(SpotData)
-SpotData_dataframe<-data.frame(Name = SpotData$XML_Head$Infos$Info$Name,
-            Orgclass = SpotData$XML_Head$Infos$Info$Orgclass,
-            Add = SpotData$XML_Head$Infos$Info$Add,
-            Opentime = SpotData$XML_Head$Infos$Info$Opentime)
-table(SpotData_dataframe$Opentime)
-``` r
-
-<hr/>
-
-### 問題
-#### 試著擷取桃園市公共自行車服務資料http://data.tycg.gov.tw/api/v1/rest/datastore/a1b4714b-3b75-4ff8-a8f2-cc377e4eaa0f?format=json並將記錄所有車站的位置與腳踏車數的資料框捷取出來，並檢查此資料表有幾個欄位?幾個觀察值?。貼上程式碼回答。
-
-### 解答
-``` r
-#library(jsonlite)  #若console已載入套件，不需重複執行
-#library(RCurl)     #若console已載入套件，不需重複執行
-BikeData<-fromJSON("http://data.tycg.gov.tw/api/v1/rest/datastore/a1b4714b-3b75-4ff8-a8f2-cc377e4eaa0f?format=json")
-str(BikeData)  
-BikeData_dataframe<-
-  data.frame(StationName = BikeData$result$records$sna,
-            BikeCount = BikeData$result$records$sbi)
-dim(BikeData_dataframe)
-``` r
-由桃園公共自行車即時服務資料的主要欄位說明可知sna表示車站名稱、sbi1表示腳踏車數，以dim檢視資料表維度，共有2個欄位、100筆觀察值
-
-<hr/>
-
-### 問題
-#### 試著擷取台北市今日施工資訊資料http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=201d8ae8-dffc-4d17-ae1f-e58d8a95b162請問今日有幾筆施工資料?
-
-### 解答
-``` r
-library(jsonlite)  #若console已載入套件，不需重複執行
-library(RCurl)     #若console已載入套件，不需重複執行
-ConstructionData<-fromJSON("http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=201d8ae8-dffc-4d17-ae1f-e58d8a95b162")
-str(ConstructionData)  
-Data_today<-ConstructionData$result$results$APPTIME
-Data_today[substring(Data_today,1,7)=="1070326"]  #資料只到1061121?
-
-``` r
 
 <hr/>
 
 ### 問題
 #### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech_Job/index.html，取出所有標題，請問第四個標題是?
+
+### 解答
 
 - 使用read_html(“欲擷取的網站網址”)函數讀取網頁
 - 使用html_nodes()函數擷取所需內容 (條件為CSS或xpath標籤)
@@ -244,119 +186,44 @@ Data_today[substring(Data_today,1,7)=="1070326"]  #資料只到1061121?
 - 使用html_attr()函數擷取資料參數（如連結url）
 
 ### 解答
-``` r
+
+#### 以%>%連接寫法
+
+``` {r  echo = T}
 library(rvest)
 PPT_Job<-read_html("https://www.ptt.cc/bbs/Tech_Job/index.html")%>%
-html_nodes(".title a")%>%
-html_text()
+          html_nodes(".title a")%>%
+          html_text()
+          
 PPT_Job[4]
-``` 
-使用SelectorGadget:綠色為要選取的項目、黃色表與綠色同層的元件、紅色為不想選取的元件
 
-
-<hr/>
-
-### 問題
-#### 試著爬誠品網路書店的中文書優惠專區http://www.eslite.com/lowest_list.aspx?cate=156 請把第一頁的特價書書名爬出來。
-
-- 想要挑戰的同學，可以試著把折數跟價錢也爬出來，但強烈建議使用SelectorGadget擴充套件
-
-### 解答
-``` r
 library(rvest)
-#書名
-BookName<-
-  read_html("http://www.eslite.com/lowest_list.aspx?cate=156")%>%
-  html_nodes("h3 a")%>%
-  html_text()
-#原價
-OriginalPrice<-
-  read_html("http://www.eslite.com/lowest_list.aspx?cate=156")%>%
-  html_nodes("div+ p span")%>%
-  html_text()
-#折扣
-Discount<-
-  read_html("http://www.eslite.com/lowest_list.aspx?cate=156")%>%
-  html_nodes("p+ p > span")%>%
-  html_text()
-#折扣價
-DiscountPrice<-
-  read_html("http://www.eslite.com/lowest_list.aspx?cate=156")%>%
-  html_nodes("p span span")%>%
-  html_text()
-  
-BookInfo <-
-  data.frame(BookName = BookName,
-              OriginalPrice = OriginalPrice,
-              Discount = Discount, 
-              DiscountPrice= DiscountPrice)
-BookInfo
+PPT_Job_2<-read_html("https://www.ptt.cc/bbs/Tech_Job/index.html")
+PPT_Job_nodes<-html_nodes(PPT_Job_2,".title a")
+PPT_Job_text<-html_text(PPT_Job_nodes)
+          
+PPT_Job_text[4]
 ``` 
 
-<hr/>
+#### 分開寫法
 
-### 問題
-#### 請試著用Rfacebook套件爬你最有興趣的粉絲專頁，抓取今年度(2018/01/01-今天)的貼文，平均按讚數是多少?按讚數最高的是哪一篇，內容是什麼?貼上程式碼，並貼上按讚數最高那篇的內文
+```{rr2 echo = T}
+library(rvest)
 
-** 提示: seq since until for迴圈 **
+PPT_Job_2<-read_html("https://www.ptt.cc/bbs/Tech_Job/index.html")
+PPT_Job_nodes<-html_nodes(PPT_Job_2,".title a")
+PPT_Job_text<-html_text(PPT_Job_nodes)
+          
+PPT_Job_text[4]
 
-### 解答
-``` r
-library(Rfacebook) #初次使用須先安裝
-token<-"EAACEdEose0cBAIEjKDXpWhy6qRXAWWWMRMsZCDDGbgTwcdJ2m5RJMacWBJNR4QOt9yWn79dI7UGIZAKbuwsLZBZBCsbhcdOvVjtKPoAA4DWbpZCnup9EiNzcFIIsOiY3PbByliZAAuSaw3GsYEMElPYxRWY1Aj21C9pQ1WgoZBgdHeblrJhGKxQu4szwNm2FNwZD"
-
-lastDate<-Sys.Date()
-DateVector<-seq(as.Date("2018-01-01"),lastDate,by="1 days")
-DateVectorStr<-as.character(DateVector)
-DateVectorStr
-
-#將token複製到此處 
-totalPage<-NULL
-
-for(i in 1:(length(DateVectorStr)-1)){
-    tempPage<-getPage("sodagreen.band", token,
-                since = DateVectorStr[i],
-                until = DateVectorStr[i+1])
-    totalPage<-rbind(totalPage,tempPage)
-}
-nrow(totalPage)
 ```
 
-<hr/>
 
-### 問題
-#### 在R中，若想要每分鐘都自動用API擷取資料，該如何做呢? (請GOOGLE，Windows & Linux是使用不同方法，擇一回答)
-### 解答
+使用SelectorGadget找CSS:
 
-<hr/>
+1. 綠色為要選取的項目（左鍵點一下）
+2. 黃色表與綠色相同的元件
+3. 紅色為不想選取的元件（黃色處左鍵再點一次）
 
-### 問題
-#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech_Job/index.html，只能取出一頁標題，觀察網頁，發現可以一直按”上頁”查看之前的文章，請問如何一次爬十頁的文章呢?
+<br /> ![test](https://github.com/CGUIM-BigDataAnalysis/BigDataCGUIM/blob/master/106/QA_figure/PPT_extract.JPG)<br />
 
-** 提示: 每頁有個編號，搭配for迴圈 **
-
-### 解答
-``` r
-library(rvest)
-PPT_Job_title_total<-NULL
-for (i in c(3009:2999)){
-PPT_Job_title<-
-  read_html(paste0("https://www.ptt.cc/bbs/Tech_Job/index",i,".html"))%>%
-  html_nodes(".title a")%>%
-  html_text()
-  
-PPT_Job_title_total<-c(PPT_Job_title_total,PPT_Job_title)}
-``` 
-
-<hr/>
-
-### 問題
-#### Rfacebook裡面的getUser()是做什麼的? 請試著用自己的帳戶測試，並貼上程式碼作答。
-
-### 解答
-
-```r
-getUsers("me", token, private_info = FALSE)
-getUsers("871525749529330", token, private_info = FALSE)
-getUsers("871525749529330", token, private_info = TRUE)
-```
