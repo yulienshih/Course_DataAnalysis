@@ -1,0 +1,197 @@
+---
+title: "資料處理與清洗  課堂練習"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 問題
+#### 爬DCard長庚大學版 (不用使用瀑布式爬蟲，爬第一頁就好)，取出文章標題、作者以及按愛心的人數，並做成一個資料框。請問按愛心的人數的欄位型態是? 請轉換為字串後寫回資料框中。https://www.dcard.tw/f/cgu
+
+** 提示: ```rvest```套件爬蟲、```data.frame```製作資料框 **
+
+### 解答
+
+``` {r echo = T}
+library(rvest)
+DCardCGU<-"https://www.dcard.tw/f/cgu"
+DCardContent<-read_html(DCardCGU)
+post_title <- DCardContent %>% html_nodes(".PostEntry_unread_2U217") %>% html_text()
+post_author<- DCardContent %>% html_nodes(".PostAuthor_root_3vAJf") %>% html_text()
+post_like<- DCardContent %>% html_nodes(".Like_counter_1enlP") %>% html_text()
+
+DCardCGU_posts <- 
+  data.frame(title = post_title,
+             author=post_author, 
+             likeN=post_like)
+
+DCardCGU_posts
+
+```
+
+</hr>
+
+### 問題
+#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech_Job/index.html，一次爬十頁的文章標題後，請試著找出標題中包含”面試”字串的位置，並試著將包含”面試”字串的標題單獨選出來
+
+** 提示: 上禮拜的詳解、標題存成向量就好、```grep()```或是```grepl()```、```[ ]```**
+
+### 解答
+
+``` {r echo = T}
+PPT_Job_title_total<-NULL
+for (i in c(3020:3011)){
+    PPT_Job_title<-
+        read_html(paste0("https://www.ptt.cc/bbs/Tech_Job/index",i,".html"))%>%
+        html_nodes(".title a")%>%
+        html_text()
+    PPT_Job_title_total<-c(PPT_Job_title_total,PPT_Job_title)
+}
+#找「面試」字串位置
+grep("面試",PPT_Job_title_total)
+#單獨選「面試」字串的標題
+##用grep()
+PPT_Job_title_total[grep("面試",PPT_Job_title_total)]
+
+##用grepl()
+PPT_Job_title_total[grepl("面試",PPT_Job_title_total)]
+
+```
+
+</hr>
+
+
+### 問題
+#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech_Job/index.html，一次爬十頁的文章標題後，請試著將”海邊”字串取代為”鴻海”、”滷肉”取代為”聯詠”，取代完畢後，請問”鴻海”出現在幾個標題中?
+
+** 提示: 上禮拜的詳解、標題存成向量就好、```gsub()```、```grep()```或是```grepl()``` **
+
+### 解答
+
+```{r echo =T}
+PPT_Job_title_total<-NULL
+for (i in c(3020:3011)){
+    PPT_Job_title<-
+        read_html(paste0("https://www.ptt.cc/bbs/Tech_Job/index",i,".html"))%>%
+        html_nodes(".title a")%>%
+        html_text()
+    PPT_Job_title_total<-c(PPT_Job_title_total,PPT_Job_title)
+}
+
+PPT_Job_title_total<-gsub("海邊","鴻海",PPT_Job_title_total)
+PPT_Job_title_total<-gsub("滷肉","聯詠",PPT_Job_title_total)
+length(PPT_Job_title_total[grep("鴻海",PPT_Job_title_total)])
+```
+
+</hr>
+
+### 問題
+
+#### 請試著用Graph API或是Rfacebook套件，取出長庚大學 @cgu.edu.tw 粉絲專頁上今年度 (2018/01/01到今天) 的所有貼文，並將貼文全文以『，。 ？ ！ 』(皆為全形標點) 做切割，把整段文字中切成單句結構。
+
+### 解答
+
+```{r echo =T}
+
+library(Rfacebook) 
+token<-"EAACEdEose0cBANGbivXnCy8mpCnKZBCgiJwEWHNUcup6jCFuUmDd9lpS4mbrtnn2UonOu2fr66fNVZArmdWjDZCHWMyN9pgKyZCpR30frekntJ8CZCZAoKoJZBD7UtjJZAZBdAfB8b86okmtmoQvCifG0nFDQUUEyturwVEwVcr2a4k2ZBUOtjZCA2OAjZASvjG7W6gZD"   #將token複製到此處  
+
+lastDate<-Sys.Date()  #系統日期
+DateVector<-seq(as.Date("2018-01-01"),lastDate,by="1 days")
+DateVectorStr<-as.character(DateVector)
+
+totalPage<-NULL
+
+for(i in 1:(length(DateVectorStr)-1)){
+    tempPage<-getPage("cgu.edu.tw", token,
+                since = DateVectorStr[i],
+                until = DateVectorStr[i+1])
+    totalPage<-rbind(totalPage,tempPage)
+}
+
+strsplit(totalPage$message,split = " |，|。|？|！")
+```
+
+<hr/>
+
+### 問題
+
+#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json ，試著將資料使用API的方式讀入R，並找到存放資料的位置，請問，在資料中，桃園市停車場是設在公園的有幾個?(名稱```parkName```有包含"公園"字串)
+
+** 提示: ```fromJSON()```、```$```、```grep()``` **
+
+### 解答
+```{r echo =T}
+library(jsonlite)
+library(RCurl)
+ParkingData<-fromJSON("http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json")
+str(ParkingData) 
+length(grep("公園",ParkingData$result$record$parkName))
+```
+
+<hr/>
+
+
+### 問題
+
+#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json ，試著將資料使用API的方式讀入R，並找到存放資料的位置，請問，在資料中，各地區(areaname)有幾個停車場? 
+
+提示: fromJSON()、$、table()
+
+** 提示: ```fromJSON()```、```$```、```grep()``` **
+
+### 解答
+```{r echo =T}
+library(jsonlite)
+library(RCurl)
+ParkingData<-fromJSON("http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json")
+str(ParkingData) 
+table(ParkingData$result$record$areaName)
+```
+</hr>
+
+### 問題
+
+#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json ，請試者基於各停車場介紹(introduction)，分出公有私有停車場，並將判斷結果“公有”、”私有”存在新欄位```Type```中，請問資料中有幾個私有停車場?
+** 提示: ```Type<-```、```ifelse()``` 、```grepl()```、```政府``` **
+
+### 解答
+```{r echo =T}
+library(jsonlite)
+library(RCurl)
+ParkingData<-fromJSON("http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json")
+str(ParkingData) 
+table(ParkingData$result$record$introduction)
+ParkingData$result$record$Type<-
+  ifelse(grepl("私有",ParkingData$result$record$introduction),"私有",
+  ifelse(grepl("公有",ParkingData$result$record$introduction),"公有",
+  ifelse(grepl("政府",ParkingData$result$record$introduction),"公有",
+  ifelse(grepl("醫院",ParkingData$result$record$introduction),"私有",""))))
+
+```
+</hr>
+
+### 問題
+
+#### 在桃園市政府資料開放平台中，找到路外停車資訊資料http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json ，請試著取出計費方式說明(payguide)的第6-7個字元，並存在新的欄位Price中。備註: 沒按照格式打的計費方式，取出的價錢會很怪，有興趣的同學可以試著想該怎麼處理所有的價錢資料。
+** 提示: fromJSON()、$Price<-、substr() **
+
+### 解答???
+```{r echo =T}
+#library(jsonlite)
+#library(RCurl)
+ParkingData<-fromJSON("http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json")
+str(ParkingData) 
+table(ParkingData$result$record$introduction)
+ParkingData$result$record$Price<-substr(ParkingData$result$record$payGuide,6,7)
+
+###
+#for (i in c(1:length(ParkingData$result$records$payGuide))){
+#  ParkingData$result$record$Price2[i]<-
+#  strsplit(ParkingData$result$record$payGuide," |:|：|/|／")[[i]][2]
+#}
+
+```
+</hr>
