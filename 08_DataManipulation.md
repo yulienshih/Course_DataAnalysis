@@ -3,7 +3,7 @@
 
 ### 問題
 
-#### 爬DCard長庚大學版 (不用使用瀑布式爬蟲，爬第一頁就好)，取出文章標題、作者以及按愛心的人數，並做成一個資料框。請問按愛心的人數的欄位型態是? 請轉換為字串後寫回資料框中。<https://www.dcard.tw/f/cgu>
+#### 爬DCard長庚大學版 (不用使用瀑布式爬蟲，爬第一頁就好)，取出文章標題、作者以及按愛心的人數，並做成一個資料框。請問按愛心的人數的欄位型態是? 請轉換為字串後寫回資料框中。<https://www.dcard.tw/f/cgu>VV
 
 \*\* 提示: `rvest`套件爬蟲、`data.frame`製作資料框 \*\*
 
@@ -25,20 +25,17 @@ post_like<- DCardContent %>% html_nodes(".Like_counter_1enlP") %>% html_text()
 DCardCGU_posts <- 
   data.frame(title = post_title,
              author=post_author, 
-             likeN=post_like)
+             likeN=post_like, stringAsFactor = F)
+class(DCardCGU_posts$post_like)
+DCardCGU_posts$post_like<-as.numeric(DCardCGU_posts$post_like)
 
 DCardCGU_posts
 ```
 
-    ##                       title                      author likeN
-    ## 1 學弟認命當墊底吧 我想過啊 長庚大學 化工與材料工程學系    22
-    ## 2      假賣二手 真坑人 ㄏㄏ                    長庚大學    11
-    ## 3                      校車                    長庚大學     5
-
 </hr>
 ### 問題
 
-#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech\_Job/index.html，一次爬十頁的文章標題後，請試著找出標題中包含”面試”字串的位置，並試著將包含”面試”字串的標題單獨選出來
+#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech\_Job/index.html，一次爬十頁的文章標題後，請試著找出標題中包含”面試”字串的位置，並試著將包含”面試”字串的標題單獨選出來  VV
 
 \*\* 提示: 上禮拜的詳解、標題存成向量就好、`grep()`或是`grepl()`、`[ ]`\*\*
 
@@ -97,7 +94,7 @@ PPT_Job_title_total[grepl("面試",PPT_Job_title_total)]
 </hr>
 ### 問題
 
-#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech\_Job/index.html，一次爬十頁的文章標題後，請試著將”海邊”字串取代為”鴻海”、”滷肉”取代為”聯詠”，取代完畢後，請問”鴻海”出現在幾個標題中?
+#### 請試著爬PTT科技工作版https://www.ptt.cc/bbs/Tech\_Job/index.html，一次爬十頁的文章標題後，請試著將”海邊”字串取代為”鴻海”、”滷肉”取代為”聯詠”，取代完畢後，請問”鴻海”出現在幾個標題中? VV
 
 \*\* 提示: 上禮拜的詳解、標題存成向量就好、`gsub()`、`grep()`或是`grepl()` \*\*
 
@@ -570,7 +567,7 @@ strsplit(totalPage$message,split = " |，|。|？|！")
 <hr />
 ### 問題
 
-#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) <http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json> ，試著將資料使用API的方式讀入R，並找到存放資料的位置，請問，在資料中，桃園市停車場是設在公園的有幾個?(名稱`parkName`有包含"公園"字串)
+#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) <http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json> ，試著將資料使用API的方式讀入R，並找到存放資料的位置，請問，在資料中，桃園市停車場是設在公園的有幾個?(名稱`parkName`有包含"公園"字串)  
 
 \*\* 提示: `fromJSON()`、`$`、`grep()` \*\*
 
@@ -630,7 +627,7 @@ length(grep("公園",ParkingData$result$record$parkName))
 <hr />
 ### 問題
 
-#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) <http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json> ，試著將資料使用API的方式讀入R，並找到存放資料的位置，請問，在資料中，各地區(areaname)有幾個停車場?
+#### 在桃園市政府資料開放平台中，找到路外停車資訊資料(每分鐘更新) <http://data.tycg.gov.tw/api/v1/rest/datastore/0daad6e6-0632-44f5-bd25-5e1de1e9146f?format=json> ，試著將資料使用API的方式讀入R，並找到存放資料的位置，請問，在資料中，各地區(areaname)有幾個停車場? VV
 
 提示: fromJSON()、$、table()
 
